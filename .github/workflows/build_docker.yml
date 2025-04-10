@@ -24,6 +24,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert repository owner to lowercase
+        run: echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -31,5 +34,5 @@ jobs:
           platform: linux/amd64, linux/arm64, linux/arm/v7
           push: true # Push the image to the container registry
           tags: |
-            $(echo ghcr.io/${{ github.repository_owner }}/webui-privaxy | tr '[:upper:]' '[:lower:]'):latest
-            $(echo ghcr.io/${{ github.repository_owner }}/webui-privaxy | tr '[:upper:]' '[:lower:]'):${{ github.event.release.tag_name }}
+            ghcr.io/${{ env.REPO_OWNER }}/webui-privaxy:latest
+            ghcr.io/${{ env.REPO_OWNER }}/webui-privaxy:${{ github.event.release.tag_name }}
